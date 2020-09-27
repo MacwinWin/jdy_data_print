@@ -1,0 +1,16 @@
+# @author : microfat
+# @time   : 09/27/20 14:02:52
+# @File   : docker-compose.yml
+
+version: "3.8"
+services: 
+    jdy_data_test:
+        image: jdy_data_test:1.0
+        container_name: jdy_data_test_1.0
+        build: .
+        ports: 
+            - 3101:3101
+        tty: true
+        env_file:
+            - .env
+        restart: always
