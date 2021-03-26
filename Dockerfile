@@ -9,8 +9,7 @@ COPY . /app
 WORKDIR /app
 
 # 安装基础环境
-RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf \
-    && sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
+RUN sed -i 's/archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list \
     && apt-get clean \
     && apt-get update \
     # 设置python pip
@@ -25,9 +24,9 @@ RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf \
 
 # 安装项目环境 
 RUN rm -Rf /app/__pycache__ \
-    && apt-get install --no-install-recommends -y wget python3-flask python3-sqlalchemy python3-requests python3-dateutil python3-pygments \
+    && apt-get install --no-install-recommends -y wget \
     && pip3 install --no-cache-dir -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt \
     && apt-get purge -y --auto-remove gcc make wget\
     && rm -rf /var/lib/apt/lists/* 
 
-EXPOSE 3101
+EXPOSE 3102

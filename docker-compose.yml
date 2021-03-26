@@ -9,7 +9,7 @@ services:
         container_name: jdy_data_test_1.0
         build: .
         ports: 
-            - 3101:3101
+            - 3102:3102
         tty: true
         env_file:
             - .env
