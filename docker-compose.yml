@@ -1,16 +1,27 @@
 # @author : microfat
-# @time   : 09/27/20 14:02:52
+# @time   : 04/02/21 16:54:52
 # @File   : docker-compose.yml
 
 version: "3.8"
 services: 
     jdy_data_test:
-        image: jdy_data_test:1.0
-        container_name: jdy_data_test_1.0
+        image: jdy_data_test:2.0
+        container_name: jdy_data_test_2.0
         build: .
         ports: 
             - 3102:3102
         tty: true
         env_file:
             - .env
+        restart: always
+
+    swagger_ui:
+        image: swaggerapi/swagger-ui
+        container_name: swagger_ui
+        volumes:
+            - ./:/files
+        ports:
+            - 18081:8080
+        environment:
+            - SWAGGER_JSON=/files/webhook.yaml
         restart: always

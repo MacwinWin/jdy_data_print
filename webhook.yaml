@@ -1,0 +1,877 @@
+openapi: '3.0.3'
+info:
+  title: jdy_webhook_service
+  version: '1.0'
+  description: Service to response requests from JDY Webhook. <a href='https://hc.jiandaoyun.com/open/11500'>Official documents</a>
+  contact:
+    email: gaoxiang992@gmail.com
+servers:
+  - url: '{protocol}://xx.xx.xx.xx:{port}'
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: http
+      port:
+        enum:
+          - '3120'
+        default: '3120'
+
+tags:
+  - name: response_webhook
+    description: response request from JDY Webhook
+paths:
+  /:
+    post:
+      tags:
+        - response_webhook
+      description: <a href='https://hc.jiandaoyun.com/open/11500'>简道云webhook文档</a>
+      operationId: postJDY
+      parameters:
+        - in: header
+          name: X-JDY-Signature
+          description: 签名内容
+          required: true
+          schema:
+            type: string
+            example: '72d3162e-cc78-11e3-81ab-4c9367dc0958'
+        - in: header
+          name: X-JDY-DeliverId
+          description: 推送事件ID，每次推送的id是唯一的。可以通过该字段完成请求的去重，防止重复接收同一个事件
+          required: true
+          schema:
+            type: string
+            example: 'sha1=7d38cdd689735b008b3c702edd92eea23791c5f6'
+      requestBody:
+        $ref: "#/components/requestBodies/webhook"
+      responses:
+        '200':
+          $ref: "#/components/responses/200"
+
+components:
+  requestBodies:
+    "webhook":
+      content:
+        data_create&update:
+          schema: 
+            $ref: "#/components/schemas/jdy_webhook_create_update"
+          examples:
+            示例1:
+              $ref: "#/components/examples/data_create_update"
+        data_delete:
+          schema: 
+            $ref: "#/components/schemas/jdy_webhook_delete"
+          examples:
+            示例1:
+              $ref: "#/components/examples/data_delete"
+        form_update:
+          schema: 
+            $ref: "#/components/schemas/jdy_webhook_formUpdate"
+          examples:
+            示例1:
+              $ref: "#/components/examples/form_update"
+        flow_message:
+          schema: 
+            $ref: "#/components/schemas/jdy_webhook_flowMessage"
+          examples:
+            示例1:
+              $ref: "#/components/examples/flow_message"
+          
+  schemas:
+    jdy_widget:
+      type: object
+      description: 控件结构
+      required:
+        - "label"
+        - "name"
+        - "type"
+      properties:
+        "label":
+          type: string
+          description: 控件名称
+        "name":
+          type: string
+          description: 字段ID
+        "type":
+          type: string
+          description: 控件类型
+        "items":
+          type: array
+          description: 可选，当控件类型为子表单时存在
+          items: 
+            type: object
+            required:
+              - "label"
+              - "name"
+              - "type"
+            properties:
+              "label":
+                type: string
+                description: 控件名称
+              "name":
+                type: string
+                description: 字段ID
+              "type":
+                type: string
+                description: 控件类型
+      
+    jdy_system_widget_creator:
+      type: object
+      description: 创建者
+      required:
+        - "_id"
+        - "name"
+        - "username"
+        - "status"
+      properties:
+        "_id":
+          type: string
+          description: 系统id
+        "name":
+          type: string
+          description: 成员昵称
+        "username":
+          type: string
+          description: 成员编号
+        "status":
+          type: integer
+          description: 成员状态(<a href="https://hc.jiandaoyun.com/blog/12276">2021-02-02新增</a>)
+
+    jdy_system_widget_updater:
+      type: object
+      description: 更新者
+      required:
+        - "_id"
+        - "name"
+        - "username"
+        - "status"
+      properties:
+        "_id":
+          type: string
+          description: 系统id
+        "name":
+          type: string
+          description: 成员昵称
+        "username":
+          type: string
+          description: 成员编号
+        "status":
+          type: integer
+          description: 成员状态(<a href="https://hc.jiandaoyun.com/blog/12276">2021-02-02新增</a>)
+    
+    jdy_widget_text:
+      nullable: false
+      description: 单行文本
+      oneOf:
+        - type: string
+          description: 有值
+        - type: string
+          description: 空值
+    jdy_widget_sn:
+      nullable: false
+      description: 流水号
+      oneOf:
+        - type: string
+          description: 有值
+        - type: string
+          description: 空值
+    jdy_widget_datetime:
+      nullable: true
+      description: 日期时间
+      oneOf:
+        - type: string
+          description: 有值
+        - type: string
+          description: 空值
+          example: null
+    jdy_widget_radiogroup:
+      nullable: false
+      description: 单选按钮组
+      oneOf:
+        - type: string
+          description: 有值
+        - type: string
+          description: 空值
+          example: ""
+    jdy_widget_combo:
+      nullable: false
+      description: 下拉框
+      oneOf:
+        - type: string
+          description: 有值
+        - type: string
+          description: 空值
+          example: ""
+
+    jdy_widget_number:
+      nullable: true
+      description: 数字
+      oneOf:
+        - type: number
+          description: 有值
+        - type: number
+          description: 空值
+          example: null
+
+    jdy_widget_address:
+      nullable: false
+      description: 地址
+      oneOf:
+        - type: object
+          description: 有值
+          required:
+            - "province"
+            - "city"
+            - "district"
+            - "detail"
+          properties:
+            "province":
+              type: string
+              description: 省
+            "city":
+              type: string
+              description: 市
+            "district":
+              type: string
+              description: 区县
+            "detail":
+              type: string
+              description: 地址详情
+        - type: object
+          description: 空值
+          example: {}
+    jdy_widget_location:
+      nullable: false
+      description: 定位
+      oneOf:
+        - type: object
+          description: 有值
+          required:
+            - "province"
+            - "city"
+            - "district"
+            - "lnglatXY"
+          properties:
+            "province":
+              type: string
+              description: 省
+            "city":
+              type: string
+              description: 市
+            "district":
+              type: string
+              description: 区县
+            "lnglatXY":
+              type: string
+              description: 经纬度
+        - type: object
+          description: 空值
+          example: {}
+    jdy_widget_signature:
+      nullable: false
+      description: 手写签名
+      oneOf:
+        - $ref: "#/components/schemas/jdy_file"
+        - type: object
+          description: 空值
+          example: {}
+    jdy_widget_linkdata:
+      nullable: false
+      description: 关联数据 
+      oneOf:
+        - type: object
+          description: 有值
+          required:
+            - "id"
+            - "key"
+          properties:
+            "id":
+              type: string
+              description: 被关联数据的id
+            "key":
+              type: string
+              description: 主键字段值(<a href='https://hc.jiandaoyun.com/blog/12316'>2021-03-16删除</a>)
+        - type: object
+          description: 空值
+          example: {}
+    jdy_widget_user:
+      nullable: true
+      description: 成员单选
+      oneOf:
+        - type: object
+          description: 有值
+          required:
+            - "_id"
+            - "name"
+            - "status"
+            - "username"
+          properties:
+            "_id":
+              type: string
+              description: 系统id
+            "name":
+              type: string
+              description: 成员昵称
+            "status":
+              type: integer
+              description: 成员状态(<a href="https://hc.jiandaoyun.com/blog/12276">2021-02-02新增</a>)
+            "username":
+              type: string
+              description: 成员编码
+        - type: object
+          description: 空值
+          example: null
+    jdy_widget_dept:
+      nullable: true
+      description: 部门单选
+      oneOf:
+        - type: object
+          description: 有值
+          required:
+            - "_id"
+            - "dept_no"
+            - "name"
+          properties:
+            "_id":
+              type: string
+              description: 系统id
+            "dept_no": 
+              type: integer
+              description: 部门编码
+            "name":
+              type: string
+              description: 部门昵称
+        - type: object
+          description: 空值
+          example: null
+    jdy_widget_phone:
+      nullable: true
+      description: 手机
+      oneOf:
+        - type: object
+          description: 有值
+          required:
+            - "phone"
+            - "verified"
+          properties:
+            "phone": 
+              type: string
+              description: 手机号码
+            "verified":
+              type: boolean
+              description: 是否验证
+        - type: object
+          description: 空值
+          example: null
+    
+    jdy_widget_checkboxgroup:
+      nullable: false
+      description: 复选框组
+      oneOf:
+        - type: array
+          description: 有值
+          items:
+            type: string
+            description: 选项
+        - type: array
+          description: 空值
+          example: []
+    jdy_widget_combocheck:
+      nullable: false
+      description: 下拉复选框
+      oneOf:
+        - type: array
+          description: 有值
+          items:
+            type: string
+            description: 选项
+        - type: array
+          description: 空值
+          example: []
+    jdy_widget_image:
+      nullable: false
+      description: 图片
+      oneOf:
+        - type: array
+          description: 有值
+          items:
+            $ref: "#/components/schemas/jdy_file"
+        - type: array
+          description: 空值
+          example: []
+    jdy_widget_upload:
+      nullable: false
+      description: 附件
+      oneOf:
+        - type: array
+          description: 有值
+          items:
+            $ref: "#/components/schemas/jdy_file"
+        - type: array
+          description: 空值
+          example: []
+    jdy_widget_usergroup:
+      nullable: false
+      description: 成员多选
+      oneOf:
+        - type: array
+          description: 有值
+          items:
+            $ref: "#/components/schemas/jdy_widget_user"
+        - type: array
+          description: 空值
+          example: []
+    jdy_widget_deptgroup:
+      nullable: false
+      description: 部门多选
+      oneOf:
+        - type: array
+          description: 有值
+          items:
+            $ref: "#/components/schemas/jdy_widget_dept"
+        - type: array
+          description: 空值
+          example: []
+    jdy_widget_subform:
+      nullable: false
+      description: 子表单
+      oneOf:
+        - type: array
+          description: 有值
+          items:
+            type: object
+            required:
+              - "_id"
+            properties:
+              "_id":
+                type: string
+                description: 子表单数据id(<a href='https://hc.jiandaoyun.com/open/12359'>2021-03-31新增</a>)
+        - type: array
+          description: 空值
+          example: []
+
+    jdy_file:
+      type: object
+      description: 文件
+      required:
+        - "mime"
+        - "name"
+        - "size"
+        - "url"
+      properties:
+        "mime":
+          type: string
+          description: 文件mime
+        "name":
+          type: string
+          description: 文件名
+        "size":
+          type: integer
+          description: 文件大小
+        "url":
+          type: string
+          description: 文件地址
+
+    jdy_system_widget_deleter:
+      type: object
+      nullable: true
+      description: 删除者
+      required:
+        - "_id"
+        - "name"
+        - "username"
+        - "status"
+      properties:
+        "_id":
+          type: string
+          description: 系统id
+        "name":
+          type: string
+          description: 成员昵称
+        "username":
+          type: string
+          description: 成员编号
+        "status":
+          type: integer
+          description: 成员状态(<a href="https://hc.jiandaoyun.com/blog/12276">2021-02-02新增</a>)
+
+    jdy_webhook_create_update:
+      type: object
+      description: 创建以及更新webhook完整表单结构(<a href="https://hc.jiandaoyun.com/open/10732">官方文档</a>)
+      required:
+        - "op"
+        - "data"
+      properties:
+        "op":
+          type: string
+          description: 类型
+        "data":
+          type: object
+          description: 创建和更新数据推送的数据结构中的data
+          required:
+            - "_id"
+            - "appId"
+            - "entryId"
+            - "formName"
+            - "createTime"
+            - "creator"
+            - "updateTime"
+            - "updater"
+            - "deleteTime"
+            - "deleter"
+          properties:
+            "_id":
+              type: string
+              description: 数据id
+            "appId":
+              type: string
+              description: 应用ID，全局唯一
+            "entryId":
+              type: string
+              description: 表单ID，在应用内唯一
+            "formName":
+              type: string
+              description: 表单名称
+            "createTime":
+              type: string
+              description: 表单创建时间
+            "creator":
+              $ref: "#/components/schemas/jdy_system_widget_creator"
+            "updateTime":
+              type: string
+              description: 表单更新时间
+            "updater":
+              $ref: "#/components/schemas/jdy_system_widget_updater"
+            "deleteTime":
+              type: string
+              nullable: true
+              description: 表单删除时间
+            "deleter":
+              $ref: "#/components/schemas/jdy_system_widget_deleter"
+
+    jdy_webhook_delete:
+      type: object
+      description: 删除数据webhook完整表单结构(<a href="https://hc.jiandaoyun.com/open/10732">官方文档</a>)
+      required:
+        - "op"
+        - "data"
+      properties:
+        "op":
+          type: string
+          description: 类型
+        "data":
+          type: object
+          description: 删除数据推送的数据结构中的data
+          required:
+            - "_id"
+            - "appId"
+            - "entryId"
+            - "formName"
+            - "deleteTime"
+            - "deleter"
+          properties:
+            "_id":
+              type: string
+              description: 数据id
+            "appId":
+              type: string
+              description: 应用ID，全局唯一
+            "entryId":
+              type: string
+              description: 表单ID，在应用内唯一
+            "formName":
+              type: string
+              description: 表单名称
+            "deleteTime":
+              type: string
+              nullable: true
+              description: 表单删除时间
+            "deleter":
+              $ref: "#/components/schemas/jdy_system_widget_deleter"
+      
+    jdy_webhook_formUpdate:
+      type: object
+      description: 表单结构变更webhook完整表单结构(<a href="https://hc.jiandaoyun.com/open/11501">官方文档</a>)
+      required:
+        - "op"
+        - "data"
+      properties:
+        "op":
+          type: string
+          description: 类型
+        "data":
+          type: object
+          description: 表单结构变更推送的数据结构中的data
+          required:
+            - "appId"
+            - "entryId"
+            - "name"
+            - "widgets"
+          properties:
+            "appId":
+              type: string
+              description: 应用ID，全局唯一
+            "entryId":
+              type: string
+              description: 表单ID，在应用内唯一
+            "name":
+              type: string
+              description: 表单名称
+            "widgets":
+              type: array
+              description: 用户控件列表，不包含系统字段
+              items: 
+                $ref: "#/components/schemas/jdy_widget"
+
+    jdy_webhook_flowMessage:
+      type: object
+      description: 消息推送webhook完整表单结构(<a href="https://hc.jiandaoyun.com/open/11497">官方文档</a>)
+      required:
+        - "op"
+        - "data"
+        - "send_time"
+      properties:
+        "op":
+          type: string
+          description: 类型
+        "data":
+          type: object
+          description: 表单结构变更推送的数据结构中的data
+          required:
+            - "to"
+            - "entry_name"
+            - "notify_text"
+            - "url"
+          properties:
+            "to":
+              type: array
+              description: 被提醒人列表
+              items:
+                required:
+                  - "username"
+                  - "name"
+                properties:
+                  "username":
+                    type: string
+                    description: 成员编码
+                  "name":
+                    type: string
+                    description: 成员昵称
+            "entry_name":
+              type: string
+              description: 推送来源表单名称
+            "notify_text":
+              type: string
+              description: 提醒文字，默认为“已到提醒时间，请及时处理”，可在提醒设置中自定义
+            "url":
+              type: string
+              description: 表单内链，需表单授权才可访问
+
+    response:
+      type: string
+    
+  examples:
+
+
+
+    data_create_update:
+      description: 创建修改数据
+      value: 
+        data:
+          _id: 6066aca24fc0b6000713963d
+          _widget_1615903226523: ''
+          address1: {}
+          appId: zb8z39ba111dc526a9835b39
+          checkboxgroup1: []
+          combo1: ''
+          combocheck1: []
+          createTime: '2021-04-02T05:33:22.613Z'
+          creator:
+            _id: 5b8dfed55affdb35dd32d7b7
+            name: 中国石油
+            status: 1
+            username: '#admin'
+          datetime1: null
+          deleteTime: null
+          deleter: null
+          dept1: null
+          deptgroup1: []
+          entryId: 6240a420d5e6752007dzd0ec
+          formName: 测试表
+          image1: []
+          linkdata_new: {}
+          location1: {}
+          number1: null
+          phone1: null
+          radiogroup1: ''
+          signature1: {}
+          sn1: ''
+          subform_new: []
+          subformname: []
+          text1: ''
+          textarea1: ''
+          updateTime: '2021-04-02T07:39:26.890Z'
+          updater:
+            _id: 0b8dzed55affdz35ddx2d7b7
+            name: 中国石油
+            status: 1
+            username: '#admin'
+          upload1: []
+          user1: null
+          usergroup1: []
+        op: data_update
+
+    data_delete:
+      description: 删除数据
+      value: 
+        data:
+          _id: 61665ff6e5f3390207e96466
+          appId: 2b8e32ba112dc526a9815b39
+          deleteTime: '2021-04-02T01:12:01.958Z'
+          deleter:
+            _id: 528d2ed55affdb25dd32d2b7
+            name: 中国石油
+            status: 1
+            username: '#admin'
+          entryId: 2010a42532e625400727d2ec
+          formName: 测试表
+        op: data_remove
+
+    form_update:
+      description: 表单推送
+      value: 
+        data:
+          appId: 5b8e39ba111dc526a9845b39
+          createTime: '2021-03-04T09:11:01.504Z'
+          entryId: 6040a425d5e6750007d7d0ec
+          name: 测试表
+          widgets:
+            - label: 单行文本
+              name: text1
+              type: text
+            - label: 多行文本
+              name: textarea1
+              type: textarea
+            - label: 数字
+              name: number1
+              type: number
+            - label: 关联数据
+              name: _widget_1615903226481
+              type: linkdata
+            - label: 职员编码
+              name: _widget_1615903226523
+              type: text
+            - label: 日期时间
+              name: datetime1
+              type: datetime
+            - label: 单选按钮组
+              name: radiogroup1
+              type: radiogroup
+            - label: 单选按钮组
+              name: _widget_1615264512192
+              type: radiogroup
+            - label: 下拉框
+              name: combo1
+              type: combo
+            - label: 地址
+              name: address1
+              type: address
+            - label: 定位
+              name: location1
+              type: location
+            - label: 图片
+              name: image1
+              type: image
+            - label: 附件
+              name: upload1
+              type: upload
+            - items:
+                - label: 单行文本
+                  name: subformname_text1
+                  type: text
+                - label: 数字
+                  name: subformname_number1
+                  type: number
+                - label: 图片
+                  name: subformname_image1
+                  type: image
+                - label: 图片
+                  name: subformname_image2
+                  type: image
+                - label: 附件
+                  name: subformname_upload1
+                  type: upload
+                - label: 成员多选
+                  name: subformname_usergroup1
+                  type: usergroup
+                - label: 部门多选
+                  name: subformname_deptgroup1
+                  type: deptgroup
+                - label: 复选框组
+                  name: subformname_checkboxgroup1
+                  type: checkboxgroup
+                - label: 下拉复选框
+                  name: subformname_combocheck1
+                  type: combocheck
+              label: 子表单
+              name: subformname
+              type: subform
+            - label: 关联数据
+              name: linkdata1
+              type: linkdata
+            - label: 手写签名
+              name: signature1
+              type: signature
+            - label: 流水号
+              name: sn1
+              type: sn
+            - label: 手机
+              name: phone1
+              type: phone
+            - label: 成员单选
+              name: user1
+              type: user
+            - label: 成员多选
+              name: usergroup1
+              type: usergroup
+            - label: 部门单选
+              name: dept1
+              type: dept
+            - label: 部门多选
+              name: deptgroup1
+              type: deptgroup
+            - items: []
+              label: 子表单
+              name: _widget_1615185100474
+              type: subform
+        op: form_update
+
+    flow_message:
+      description: 消息推送
+      value: 
+        op: flow_message
+        data:
+          to:
+            - username: jiandaoyun
+              name: 小云
+          entry_name: 请假审批
+          notify_text: 小云本周五请假1天
+          url: 'https://abc.com/xyz'
+        send_time: '2017-10-20T22:41:51.430Z'
+
+    200:
+      description: 成功响应webhook请求
+      value: 
+        "ok"
+          
+  responses:
+    200:
+      description: 成功响应webhook请求
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/response"
+          examples:
+            200:
+              $ref: "#/components/examples/200"

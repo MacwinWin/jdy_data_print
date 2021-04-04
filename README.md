@@ -1,4 +1,4 @@
-# jdy_webhook_print
+# jdy_data_print
 
 
 <!-- TABLE OF CONTENTS -->
@@ -14,19 +14,29 @@
   * [Run app](#run-app)
   * [Set jdy](#set-jdy)
   * [Receive data](#receive-data)
+  * [Swagger UI](#swagger-ui)
 * [To-Do](#To-Do)
 * [License](#license)
 
 <!-- ABOUT THE PROJECT -->
 ## About the Project
-Print data from '简道云' api and webhook, to help you understand the data structure you have got from '简道云'. There are two mainly data source:
+Print data from '简道云' API and Webhook, to help you understand the data structure you have got from '简道云'. There are two mainly data source:
 - [API](https://hc.jiandaoyun.com/open/10992)(waitting for a further update...)
-- [webhook](https://hc.jiandaoyun.com/open/11500)
+- [Webhook](https://hc.jiandaoyun.com/open/11500)
+
+Due to the excessive amount of redundant information on the website, I extract the main information(data structure) into file followed OpenAPI Spec V 3.0.3, and render it through Swagger UI. Swagger file has not content API yet.
+- [API](https://hc.jiandaoyun.com/open/10992)(waitting for a further update...)
+- Webhook
+  - [data push](https://hc.jiandaoyun.com/open/10732)
+  - [form push](https://hc.jiandaoyun.com/open/11501)
+  - [message push](https://hc.jiandaoyun.com/open/11497)
 
 Project Characteristic:
 
 - Docker-based Deployment
 - Flask
+- Swagger UI
+- OpenAPI Specification Version 3.0.3
 
 ### Architecture
 * Ubuntu 20.04 : Operating System
@@ -37,25 +47,28 @@ Project Characteristic:
 ### Files Structure
 ```
 .
-├── app.py
-├── docker-compose.yml
 ├── Dockerfile
 ├── LICENSE
 ├── README.md
+├── app.py
+├── docker-compose.yml
 ├── receive_data.png
 ├── requirements.txt
-└── set_jdy.png
+├── set_jdy.png
+├── swagger-ui.png
+└── webhook.yaml
 
-0 directories, 8 files
+0 directories, 10 files
+
 -------------------------------------------------------------------------------
 Language                     files          blank        comment           code
 -------------------------------------------------------------------------------
-Markdown                         1             22              0             92
+YAML                             2             27              3            874
+Markdown                         1             21              0             98
 Python                           1              7              6             48
-Dockerfile                       1              5              7             21
-YAML                             1              1              3             12
+Dockerfile                       1              5              7             20
 -------------------------------------------------------------------------------
-SUM:                             4             35             16            173
+SUM:                             5             60             16           1040
 -------------------------------------------------------------------------------
 ```
 
@@ -107,8 +120,16 @@ Formatted and colorful json print
 <p align="center">
     <img src="receive_data.png">
 
+### swagger ui
+visit: http://127.0.0.1:18081
+<p align="center">
+    <img src="swagger-ui.png">
+
+note: Different widgets in same data format may be have different empty data. For example, widget 'datetiem' and widget 'text' have the same data format 'sting', but the empty data of 'datetime' is 'null', and 'text' is "''".
+
 ## To-Do
-- Support API data
+- [x] Add Swagger file
+- [ ] Support API data
 
 <!-- LICENSE -->
 ## License
