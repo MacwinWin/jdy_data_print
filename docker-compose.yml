@@ -1,12 +1,12 @@
 # @author : microfat
-# @time   : 04/02/21 16:54:52
+# @time   : 04/21/22 10:46:23
 # @File   : docker-compose.yml
 
 version: "3.8"
 services: 
     jdy_data_test:
-        image: jdy_data_test:2.0
-        container_name: jdy_data_test_2.0
+        image: jdy_data_test:2.1
+        container_name: jdy_data_test_2.1
         build: .
         ports: 
             - 3102:3102

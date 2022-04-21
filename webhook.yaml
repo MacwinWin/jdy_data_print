@@ -1,8 +1,9 @@
 openapi: '3.0.3'
 info:
   title: jdy_webhook_service
-  version: '1.0'
-  description: Service to response requests from JDY Webhook. <a href='https://hc.jiandaoyun.com/open/11500'>Official documents</a>
+  version: '1.1'
+  description: Service to response requests from JDY Webhook. <a href='https://hc.jiandaoyun.com/open/11500'>Official documents</a><br>
+    <ol> 2022-04-21:&nbsp;成员单员、成员多选及系统字段中的creator、updater、deleter添加type字段<a href='https://hc.jiandaoyun.com/doc/14227'>Official documents</a><br>
   contact:
     email: gaoxiang992@gmail.com
 servers:
@@ -15,8 +16,8 @@ servers:
         default: http
       port:
         enum:
-          - '3120'
-        default: '3120'
+          - '3102'
+        default: '3102'
 
 tags:
   - name: response_webhook
@@ -38,7 +39,7 @@ paths:
             example: '72d3162e-cc78-11e3-81ab-4c9367dc0958'
         - in: header
           name: X-JDY-DeliverId
-          description: 推送事件ID，每次推送的id是唯一的。可以通过该字段完成请求的去重，防止重复接收同一个事件
+          description: 推送事件ID,每次推送的id是唯一的。可以通过该字段完成请求的去重,防止重复接收同一个事件
           required: true
           schema:
             type: string
@@ -98,7 +99,7 @@ components:
           description: 控件类型
         "items":
           type: array
-          description: 可选，当控件类型为子表单时存在
+          description: 可选,当控件类型为子表单时存在
           items: 
             type: object
             required:
@@ -124,6 +125,7 @@ components:
         - "name"
         - "username"
         - "status"
+        - "type"
       properties:
         "_id":
           type: string
@@ -136,7 +138,10 @@ components:
           description: 成员编号
         "status":
           type: integer
-          description: 成员状态(<a href="https://hc.jiandaoyun.com/blog/12276">2021-02-02新增</a>)
+          description: 成员状态(<a href="https://hc.jiandaoyun.com/doc/13850">2021-02-02新增</a>)
+        "type":
+          type: number
+          description: 内/外部组织标记(<a href="https://hc.jiandaoyun.com/doc/14227">2022-04-21新增</a>)
 
     jdy_system_widget_updater:
       type: object
@@ -146,6 +151,7 @@ components:
         - "name"
         - "username"
         - "status"
+        - "type"
       properties:
         "_id":
           type: string
@@ -158,7 +164,10 @@ components:
           description: 成员编号
         "status":
           type: integer
-          description: 成员状态(<a href="https://hc.jiandaoyun.com/blog/12276">2021-02-02新增</a>)
+          description: 成员状态(<a href="https://hc.jiandaoyun.com/doc/13850">2021-02-02新增</a>)
+        "type":
+          type: number
+          description: 内/外部组织标记(<a href="https://hc.jiandaoyun.com/doc/14227">2022-04-21新增</a>)
     
     jdy_widget_text:
       nullable: false
@@ -306,6 +315,7 @@ components:
             - "name"
             - "status"
             - "username"
+            - "type"
           properties:
             "_id":
               type: string
@@ -315,10 +325,13 @@ components:
               description: 成员昵称
             "status":
               type: integer
-              description: 成员状态(<a href="https://hc.jiandaoyun.com/blog/12276">2021-02-02新增</a>)
+              description: 成员状态(<a href="https://hc.jiandaoyun.com/doc/13850">2021-02-02新增</a>)
             "username":
               type: string
               description: 成员编码
+            "type":
+              type: number
+              description: 内/外部组织标记(<a href="https://hc.jiandaoyun.com/doc/14227">2022-04-21新增</a>)
         - type: object
           description: 空值
           example: null
@@ -482,6 +495,7 @@ components:
         - "name"
         - "username"
         - "status"
+        - "type"
       properties:
         "_id":
           type: string
@@ -494,7 +508,10 @@ components:
           description: 成员编号
         "status":
           type: integer
-          description: 成员状态(<a href="https://hc.jiandaoyun.com/blog/12276">2021-02-02新增</a>)
+          description: 成员状态(<a href="https://hc.jiandaoyun.com/doc/13850">2021-02-02新增</a>)
+        "type":
+          type: number
+          description: 内/外部组织标记(<a href="https://hc.jiandaoyun.com/doc/14227">2022-04-21新增</a>)
 
     jdy_webhook_create_update:
       type: object
@@ -526,10 +543,10 @@ components:
               description: 数据id
             "appId":
               type: string
-              description: 应用ID，全局唯一
+              description: 应用ID,全局唯一
             "entryId":
               type: string
-              description: 表单ID，在应用内唯一
+              description: 表单ID,在应用内唯一
             "formName":
               type: string
               description: 表单名称
@@ -576,10 +593,10 @@ components:
               description: 数据id
             "appId":
               type: string
-              description: 应用ID，全局唯一
+              description: 应用ID,全局唯一
             "entryId":
               type: string
-              description: 表单ID，在应用内唯一
+              description: 表单ID,在应用内唯一
             "formName":
               type: string
               description: 表单名称
@@ -611,16 +628,16 @@ components:
           properties:
             "appId":
               type: string
-              description: 应用ID，全局唯一
+              description: 应用ID,全局唯一
             "entryId":
               type: string
-              description: 表单ID，在应用内唯一
+              description: 表单ID,在应用内唯一
             "name":
               type: string
               description: 表单名称
             "widgets":
               type: array
-              description: 用户控件列表，不包含系统字段
+              description: 用户控件列表,不包含系统字段
               items: 
                 $ref: "#/components/schemas/jdy_widget"
 
@@ -663,18 +680,15 @@ components:
               description: 推送来源表单名称
             "notify_text":
               type: string
-              description: 提醒文字，默认为“已到提醒时间，请及时处理”，可在提醒设置中自定义
+              description: 提醒文字,默认为“已到提醒时间,请及时处理”,可在提醒设置中自定义
             "url":
               type: string
-              description: 表单内链，需表单授权才可访问
+              description: 表单内链,需表单授权才可访问
 
     response:
       type: string
     
   examples:
-
-
-
     data_create_update:
       description: 创建修改数据
       value: 
@@ -692,6 +706,8 @@ components:
             name: 中国石油
             status: 1
             username: '#admin'
+            type: '0'
+
           datetime1: null
           deleteTime: null
           deleter: null
@@ -717,6 +733,7 @@ components:
             name: 中国石油
             status: 1
             username: '#admin'
+            type: '0'
           upload1: []
           user1: null
           usergroup1: []
@@ -734,6 +751,7 @@ components:
             name: 中国石油
             status: 1
             username: '#admin'
+            type: '0'
           entryId: 2010a42532e625400727d2ec
           formName: 测试表
         op: data_remove
