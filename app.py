@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # @author : microfat
-# @time   : 09/27/20 14:03:09
+# @time   : 04/21/22 11:37:59
 # @File   : app.py
 
 import hashlib
 import threading
 import json
 from pygments import highlight, lexers, formatters
+
 from flask import Flask, request
 
 app = Flask(__name__)
+
 
 class Handle:
     def __init__(self):
@@ -55,7 +57,11 @@ def callback():
     nonce = request.args['nonce']
     timestamp = request.args['timestamp']
     print('\n' + '\x1b[94m' + str(request.headers) + '\x1b[39;49;00m', end='')
-    if request.headers['x-jdy-signature'] != handle.get_signature(nonce, payload, 'test', timestamp):
+    if 'x-jdy-signature' not in request.headers:
+        threading.Thread(target=handle.handle, args=(json.loads(payload), )).start()
+        return 'success'
+    elif request.headers['x-jdy-signature'] != handle.get_signature(nonce, payload, 'test', timestamp):
         return 'fail', 401
-    threading.Thread(target=handle.handle, args=(json.loads(payload), )).start()
-    return 'success'
+    else:
+        threading.Thread(target=handle.handle, args=(json.loads(payload), )).start()
+        return 'success'

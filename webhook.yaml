@@ -140,7 +140,7 @@ components:
           type: integer
           description: 成员状态(<a href="https://hc.jiandaoyun.com/doc/13850">2021-02-02新增</a>)
         "type":
-          type: number
+          type: integer
           description: 内/外部组织标记(<a href="https://hc.jiandaoyun.com/doc/14227">2022-04-21新增</a>)
 
     jdy_system_widget_updater:
@@ -166,7 +166,7 @@ components:
           type: integer
           description: 成员状态(<a href="https://hc.jiandaoyun.com/doc/13850">2021-02-02新增</a>)
         "type":
-          type: number
+          type: integer
           description: 内/外部组织标记(<a href="https://hc.jiandaoyun.com/doc/14227">2022-04-21新增</a>)
     
     jdy_widget_text:
@@ -330,7 +330,7 @@ components:
               type: string
               description: 成员编码
             "type":
-              type: number
+              type: integer
               description: 内/外部组织标记(<a href="https://hc.jiandaoyun.com/doc/14227">2022-04-21新增</a>)
         - type: object
           description: 空值
@@ -510,7 +510,7 @@ components:
           type: integer
           description: 成员状态(<a href="https://hc.jiandaoyun.com/doc/13850">2021-02-02新增</a>)
         "type":
-          type: number
+          type: integer
           description: 内/外部组织标记(<a href="https://hc.jiandaoyun.com/doc/14227">2022-04-21新增</a>)
 
     jdy_webhook_create_update:
@@ -706,7 +706,7 @@ components:
             name: 中国石油
             status: 1
             username: '#admin'
-            type: '0'
+            type: 0
 
           datetime1: null
           deleteTime: null
@@ -733,7 +733,7 @@ components:
             name: 中国石油
             status: 1
             username: '#admin'
-            type: '0'
+            type: 0
           upload1: []
           user1: null
           usergroup1: []
@@ -751,7 +751,7 @@ components:
             name: 中国石油
             status: 1
             username: '#admin'
-            type: '0'
+            type: 0
           entryId: 2010a42532e625400727d2ec
           formName: 测试表
         op: data_remove
