@@ -345,6 +345,7 @@ components:
             - "_id"
             - "dept_no"
             - "name"
+            - "type"
           properties:
             "_id":
               type: string
@@ -355,6 +356,9 @@ components:
             "name":
               type: string
               description: 部门昵称
+            "type":
+              type: integer
+              description: 内/外部组织标记(<a href="https://hc.jiandaoyun.com/doc/14227">2022-04-21新增</a>) 
         - type: object
           description: 空值
           example: null
